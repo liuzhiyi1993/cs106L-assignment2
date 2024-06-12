@@ -27,8 +27,9 @@ using std::unordered_map;   using std::unordered_set;
 // BEGIN STUDENT CODE HERE
 bool valid_wikilink(const string& link) {
     // replace these lines!
-    (void) link;
-    throw std::invalid_argument("Not implemented yet.\n");
+    // (void) link;
+    // throw std::invalid_argument("Not implemented yet.\n");
+    return std::all_of(link.begin(), link.end(), [](char c) { return c != '#' && c != ':'; });
 }
 // END STUDENT CODE HERE
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +54,12 @@ unordered_set<string> findWikiLinks(const string& inp) {
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // BEGIN STUDENT CODE HERE
         // Please delete this line when you start working!
-        throw std::invalid_argument("Not implemented yet.\n");
+        // throw std::invalid_argument("Not implemented yet.\n");
+        url_start = std::search(url_start, inp.end(), delim.begin(), delim.end());
+        if (url_start == inp.end()) {
+            break;
+        }
+        url_start += delim.size();
         // END STUDENT CODE HERE
         ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +72,8 @@ unordered_set<string> findWikiLinks(const string& inp) {
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // BEGIN STUDENT CODE HERE (delete/edit this line)
-        auto url_end = url_start;
+        // auto url_end = url_start;
+        auto url_end = std::find(url_start, inp.end(), '"');
         // END STUDENT CODE HERE
         ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +84,8 @@ unordered_set<string> findWikiLinks(const string& inp) {
         
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // BEGIN STUDENT CODE HERE (delete/edit this line)
-        string link;
+        // string link;
+        string link = std::string(url_start, url_end);
         // END STUDENT CODE HERE
         ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,7 +154,7 @@ string WikiScraper::getPageSource(const string &page_name) {
         // returns the content of the webpage. when this assignment was on QtCreator,
         // we had a whole separate assignment for making sure an alternate Internet Library
         // (not cpr) was working on your personal pc. look how simple it is now!
-        cpr::Response r = cpr::Get(cpr::Url{url});
+        cpr::Response r = cpr::Get(cpr::Url{url}, cpr::VerifySsl{false});
 
         string ret = r.text;
         if (r.status_code != 200) {

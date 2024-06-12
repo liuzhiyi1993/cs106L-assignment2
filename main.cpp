@@ -1,13 +1,14 @@
+#include "wikiscraper.h"
 #include <iostream>     // for cout, cin
 #include <fstream>      // for ifstream
 #include <sstream>      // for stringstream
 #include <filesystem>   	// making inputting files easier
+#include <algorithm>
 #include <stdexcept>
 #include <unordered_set>
 #include <vector>
 #include <queue>
 #include <unordered_map>
-#include "wikiscraper.h"
 
 using std::cout;            using std::endl;
 using std::ifstream;        using std::stringstream;
@@ -41,9 +42,10 @@ using std::unordered_set;   using std::cin;
 // BEGIN STUDENT CODE HERE
 int numCommonLinks(const unordered_set<string>& curr_set, const unordered_set<string>& target_set) {
     // replace all of these lines!
-    (void) target_set;
-    (void) curr_set;
-    return 0; 
+    // (void) target_set;
+    // (void) curr_set;
+    // return 0;
+    return std::count_if(curr_set.begin(), curr_set.end(), [&target_set](const string& s){ return target_set.find(s) != target_set.end(); });
 }
 // END STUDENT CODE HERE
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,11 +67,16 @@ vector<string> findWikiLadder(const string& start_page, const string& end_page) 
     // BEGIN STUDENT CODE HERE
     auto cmp_fn = [&w, &target_set](const vector<string>& left, const vector<string>& right) {
         // replace all of these lines.
-        (void) w;
-        (void) target_set;
-        (void) left;
-        (void) right;
-        return false; // replace this line! make sure to use numCommonLinks.
+        // (void) w;
+        // (void) target_set;
+        // (void) left;
+        // (void) right;
+        // return false; // replace this line! make sure to use numCommonLinks.
+        const string& page1 = left.back();
+        const string& page2 = right.back();
+        int num1 = numCommonLinks(w.getLinkSet(page1), target_set);
+        int num2 = numCommonLinks(w.getLinkSet(page2), target_set);
+        return num1 < num2;
     };
     // END STUDENT CODE HERE
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,10 +90,10 @@ vector<string> findWikiLadder(const string& start_page, const string& end_page) 
     // BEGIN STUDENT CODE HERE
     // something like priority_queue<...> queue(...);
     // please delete ALL 4 of these lines! they are here just for the code to compile.
-    std::priority_queue<vector<string>> queue;
-    throw std::invalid_argument("Not implemented yet.\n");
-    return {};
-
+    // std::priority_queue<vector<string>> queue;
+    // throw std::invalid_argument("Not implemented yet.\n");
+    // return {};
+    std::priority_queue<vector<string>, vector<vector<string>>, decltype(cmp_fn)> queue(cmp_fn);
     // END STUDENT CODE HERE
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,6 +161,7 @@ int main() {
     for (int i = 0; i < numPairs; i++) {
         // parse the start and end page from each line
         in >> startPage >> endPage;
+        // std::cout << startPage << endPage << std::endl;
         outputLadders.push_back(findWikiLadder(startPage, endPage));
     }
 
